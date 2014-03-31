@@ -2,6 +2,7 @@ import colorsys
 import functools
 import logging
 import math
+import os
 
 import Image
 
@@ -15,7 +16,8 @@ def huesim(hls, tgt):
     return hls[2]*math.cos(2*math.pi*abs(hls[0] - tgt))
 
 class ImageAnalysis(object):
-    def __init__(self):
+    def __init__(self, meta=None):
+        self.meta = meta or {}
         self.pixels = 0
         self.total_red = 0.0
         self.total_green = 0.0
@@ -37,6 +39,11 @@ class ImageAnalysis(object):
             self.total_complexity += abs(hls[1] - self.last)
             #self.total_complexity += abs(p[0] - self.last[0]) + abs(p[1] - self.last[1]) + abs(p[2] - self.last[2])
         self.last = hls[1]
+
+    def get(self, prop, default=None):
+        if not hasattr(self, prop):
+            return default
+        return getattr(self, prop)
 
     @property
     def red(self):
@@ -79,7 +86,7 @@ def huesim(p, tgt):
 
 def analyze(filename):
     im = Image.open(filename)
-    analysis = ImageAnalysis()
+    analysis = ImageAnalysis(meta={'filename': os.path.split(filename)[-1]})
     for p in im.getdata():
         analysis.add_pixel(p)
     return analysis
