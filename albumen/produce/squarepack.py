@@ -90,7 +90,7 @@ def gen_image(g, attr, cell=100):
     for coord, spec in g.data.iteritems():
         src = sources.pop(0)
         print coord, spec[0], src
-        src_img = Image.open('samples/%s' % src).resize((cell*spec[0], cell*spec[0]))
+        src_img = Image.open('samples/%s' % src).resize((cell*spec[0], cell*spec[0]), Image.ANTIALIAS)
         box = (cell*coord[0], cell*coord[1], cell*(coord[0] + spec[0]), cell*(coord[1] + spec[0]))
         img.paste(src_img, box)
     return img
@@ -108,8 +108,6 @@ def gen_spec(xpx, ypx, n):
 
 def main(x,y,n, attr):
     xcell, ycell, cellsize = gen_spec(x, y, n)
-    print [xcell, ycell, cellsize, x, y, n]
-    exit()
     g = gen_grid(xcell, ycell, n)
     im = gen_image(g, attr=attr, cell=cellsize)
     im.save('bg_%s.png' % attr, format='PNG')
