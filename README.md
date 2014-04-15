@@ -1,4 +1,7 @@
-albumartist
+albumen
 ===========
 
-Some stuff involving album art
+Collect album art
+Arrange and curate it
+Analyze it
+Do some other things

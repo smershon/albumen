@@ -6,5 +6,8 @@ setup(
     url='https://github.com/smershon/albumen',
     author='Stuart Mershon',
     description=('A tool for collecting and displaying album art.'),
-    packages=['albumen']
+    packages=[
+        'albumen', 
+        'albumen.download',
+        'albumen.produce']
 )
