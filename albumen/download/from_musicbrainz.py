@@ -2,7 +2,7 @@ import logging
 import urllib2
 import simplejson as json
 import StringIO
-import Image
+from PIL import Image
 
 log = logging.getLogger(__name__)
 
@@ -37,3 +37,16 @@ def image_urls(mbids):
         for image_obj in json.loads(response.read())['images']:
             log.info('Image url %s found', image_obj)
             yield image_obj['image']
+
+def from_url(url):
+    try:
+        response = urllib2.urlopen(url)
+        return Image.open(StringIO.StringIO(response.read()))
+    except Exception, e:
+        log.error(e)
+
+def to_dir(img, filepath, width=600, height=600):
+    img2 = img.resize((width, height), Image.ANTIALIAS)
+    img2.save(filepath)
+    img2.filename = filepath
+    return img2
