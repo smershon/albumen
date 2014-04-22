@@ -13,7 +13,7 @@ class Storage(object):
                     pk          INTEGER PRIMARY KEY,
                     title       TEXT, 
                     artist      TEXT,
-                    mbid        TEXT )
+                    has_image   INTEGER )
                 """)
             c.execute("""
                 CREATE TABLE IF NOT EXISTS images (
@@ -50,7 +50,7 @@ class Storage(object):
         with self.db_conn() as conn:
             c = conn.cursor()
             c.execute("""
-                SELECT artist, title, mbid FROM albums
+                SELECT artist, title, has_mbid FROM albums
                 WHERE artist = ? AND title = ?""",
                 (artist, title))
             row = c.fetchone()
@@ -58,28 +58,28 @@ class Storage(object):
             return {
                 'artist': row[0],
                 'album': row[1],
-                'mbid': row[2]
+                'has_mbid': row[2]
             }
         return None
 
-    def update_album(self, artist, title, mbid=None):
+    def update_album(self, artist, title, has_image=True):
         pk = self.album_pk(artist, title)
         if pk:
             with self.db_conn() as conn:
                 c = conn.cursor()
                 c.execute("""
                     UPDATE albums SET
-                        title=?, artist=?, mbid=?
+                        title=?, artist=?, has_image=?
                     WHERE pk = ?""",
-                    (title, artist, mbid, pk))
+                    (title, artist, int(has_image), pk))
         else:
             with self.db_conn() as conn:
                 c = conn.cursor()
                 c.execute("""
                     INSERT INTO albums
-                        (title, artist, mbid)
+                        (title, artist, has_image)
                     VALUES (?, ?, ?)""",
-                    (title, artist, mbid))
+                    (title, artist, int(has_image)))
 
     def get_images_for_album(self, artist, title):
         pk = self.album_pk(artist, title)
@@ -123,3 +123,19 @@ class Storage(object):
                     (md5, path, album_fk, width, height)
                 VALUES (?, ?, ?, ?, ?)""",
                 (file_md5, img.filename, pk, img.size[0], img.size[1]))
+
+    def all_albums(self):
+        with self.db_conn() as conn:
+            c = conn.cursor()
+            c.execute("""
+                SELECT artist, title, has_image FROM albums""")
+            rows = c.fetchall()
+        return rows
+
+    def all_images(self):
+        with self.db_conn() as conn:
+            c = conn.cursor()
+            c.execute("""
+                SELECT md5, path, album_fk, width, height FROM images""")
+            rows = c.fetchall()
+        return rows

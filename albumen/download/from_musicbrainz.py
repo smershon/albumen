@@ -6,6 +6,11 @@ from PIL import Image
 
 log = logging.getLogger(__name__)
 
+def _as_list(x):
+    if isinstance(x, (list, tuple)):
+        return x
+    return [x]
+
 def get(mbid):
     url = 'http://coverartarchive.org/release/%s' % mbid
 
@@ -24,6 +29,7 @@ def get(mbid):
             log.error(e)
 
 def image_urls(mbids):
+    mbids = _as_list(mbids)
     for mbid in mbids:
         url = 'http://coverartarchive.org/release/%s' % mbid
         log.info('Fetching %s', url)
