@@ -4,4 +4,4 @@ albumen
 Collect album art
 Arrange and curate it
 Analyze it
-Do some other things
+Create desktops and mosaics of your favorite albums
