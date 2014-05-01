@@ -37,7 +37,6 @@ class ImageAnalysis(object):
         self.total_lightness += hls[1]
         if self.last is not None:
             self.total_complexity += abs(hls[1] - self.last)
-            #self.total_complexity += abs(p[0] - self.last[0]) + abs(p[1] - self.last[1]) + abs(p[2] - self.last[2])
         self.last = hls[1]
 
     def get(self, prop, default=None):
@@ -84,10 +83,17 @@ class ImageAnalysis(object):
 def huesim(p, tgt):
     return p[2]*math.cos(2*math.pi*abs(p[0] - tgt))
 
-def analyze(filename):
+def analyze_file(filename):
     im = Image.open(filename)
-    analysis = ImageAnalysis(meta={'filename': os.path.split(filename)[-1]})
-    for p in im.getdata():
+    return analyze(im)
+
+def analyze(img):
+    analysis = ImageAnalysis(meta={
+        'filename': os.path.split(img.filename)[-1],
+        'filepath': img.filename,
+        'width': img.size[0],
+        'height': img.size[1]})
+    for p in img.getdata():
         analysis.add_pixel(p)
     return analysis
 

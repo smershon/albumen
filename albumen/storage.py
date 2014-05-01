@@ -106,8 +106,8 @@ class Storage(object):
             return {'path': row[0], 'width': row[1], 'height': row[2]}
         return None
 
-    def update_image(self, artist, title, img, analysis=None):
-        with open(img.filename, 'rb') as f:
+    def update_image(self, artist, title, analysis):
+        with open(analysis.meta['filepath'], 'rb') as f:
             file_md5 = md5.new(f.read()).hexdigest() 
 
         pk = self.album_pk(artist, title)
@@ -122,7 +122,7 @@ class Storage(object):
                 INSERT OR REPLACE into images
                     (md5, path, album_fk, width, height)
                 VALUES (?, ?, ?, ?, ?)""",
-                (file_md5, img.filename, pk, img.size[0], img.size[1]))
+                (file_md5, analysis.meta['filepath'], pk, analysis.meta['width'], analysis.meta['height']))
 
     def all_albums(self):
         with self.db_conn() as conn:
