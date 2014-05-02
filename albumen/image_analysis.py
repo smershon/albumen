@@ -46,7 +46,7 @@ class ImageAnalysis(object):
 
     @property
     def red(self):
-        return self.total_red/self.pixels
+        return self.total_red/self.pixels if self.pixels else 0.0
 
     @property
     def cyan(self):
@@ -54,7 +54,7 @@ class ImageAnalysis(object):
 
     @property
     def green(self):
-        return self.total_green/self.pixels
+        return self.total_green/self.pixels if self.pixels else 0.0
 
     @property
     def magenta(self):
@@ -62,7 +62,7 @@ class ImageAnalysis(object):
 
     @property
     def blue(self): 
-        return self.total_blue/self.pixels
+        return self.total_blue/self.pixels if self.pixels else 0.0
 
     @property
     def yellow(self):
@@ -70,15 +70,15 @@ class ImageAnalysis(object):
         
     @property
     def saturation(self):
-        return self.total_saturation/self.pixels
+        return self.total_saturation/self.pixels if self.pixels else 0.0
 
     @property
     def lightness(self):
-        return self.total_lightness/self.pixels
+        return self.total_lightness/self.pixels if self.pixels else 0.0
 
     @property
     def complexity(self):
-        return self.total_complexity/self.pixels
+        return self.total_complexity/self.pixels if self.pixels else 0.0
 
 def huesim(p, tgt):
     return p[2]*math.cos(2*math.pi*abs(p[0] - tgt))

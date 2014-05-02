@@ -86,11 +86,20 @@ class Storage(object):
         with self.db_conn() as conn:
             c = conn.cursor()
             c.execute("""
-                SELECT path, width, height FROM images
+                SELECT path, width, height, red, green, blue, lightness, saturation, complexity
+                FROM images
                 WHERE album_fk = ?""",
                 (pk,))
             rows = c.fetchall()
-        return [{'path': r[0], 'width': r[1], 'height': r[2]} for r in rows]
+        return [{'path': r[0], 
+                 'width': r[1], 
+                 'height': r[2], 
+                 'red': r[3], 
+                 'green': r[4],
+                 'blue': r[5],
+                 'lightness': r[6],
+                 'saturation': r[7],
+                 'complexity': r[8]} for r in rows]
 
     def get_image_by_path(self, path):
         with open(path, 'rb') as f:
@@ -120,9 +129,10 @@ class Storage(object):
             c = conn.cursor()
             c.execute("""
                 INSERT OR REPLACE into images
-                    (md5, path, album_fk, width, height)
-                VALUES (?, ?, ?, ?, ?)""",
-                (file_md5, analysis.meta['filepath'], pk, analysis.meta['width'], analysis.meta['height']))
+                    (md5, path, album_fk, width, height, red, green, blue, lightness, saturation, complexity)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (file_md5, analysis.meta['filepath'], pk, analysis.meta['width'], analysis.meta['height'],
+                 analysis.red, analysis.green, analysis.blue, analysis.lightness, analysis.saturation, analysis.complexity))
 
     def all_albums(self):
         with self.db_conn() as conn:
@@ -136,6 +146,8 @@ class Storage(object):
         with self.db_conn() as conn:
             c = conn.cursor()
             c.execute("""
-                SELECT md5, path, album_fk, width, height FROM images""")
+                SELECT md5, path, album_fk, width, height,
+                    red, green, blue, lightness, saturation, complexity
+                FROM images""")
             rows = c.fetchall()
         return rows
