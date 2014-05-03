@@ -115,7 +115,7 @@ class Storage(object):
             return {'path': row[0], 'width': row[1], 'height': row[2]}
         return None
 
-    def update_image(self, artist, title, analysis):
+    def update_image(self, artist, title, analysis, replace=False):
         with open(analysis.meta['filepath'], 'rb') as f:
             file_md5 = md5.new(f.read()).hexdigest() 
 
@@ -127,6 +127,8 @@ class Storage(object):
 
         with self.db_conn() as conn:
             c = conn.cursor()
+            if replace:
+                c.execute('DELETE FROM images WHERE album_fk=?', (pk,))
             c.execute("""
                 INSERT OR REPLACE into images
                     (md5, path, album_fk, width, height, red, green, blue, lightness, saturation, complexity)
