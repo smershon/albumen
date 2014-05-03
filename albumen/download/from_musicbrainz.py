@@ -46,7 +46,8 @@ def image_urls(mbids):
 
 def from_url(url):
     try:
-        response = urllib2.urlopen(url)
+        request = urllib2.Request(url, headers={'User-Agent': 'Albumen'})
+        response = urllib2.urlopen(request)
         return Image.open(StringIO.StringIO(response.read()))
     except Exception, e:
         log.error(e)
