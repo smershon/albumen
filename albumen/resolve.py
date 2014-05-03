@@ -10,12 +10,22 @@ def xml_get(element, path, prefix=''):
         cur = cur.find('%s%s' % (prefix, level))
     return cur
 
-def search(artist, title):
-    url = 'http://musicbrainz.org/ws/2/release/?query=artist:"%s" AND release:"%s"' % (artist, title)
+def search(artist=None, title=None):
+
+    if artist and title:
+        url = 'http://musicbrainz.org/ws/2/release/?query=artist:"%s" AND release:"%s"' % (artist, title)
+    elif artist:
+        url = 'http://musicbrainz.org/ws/2/release/?query=artist:"%s"' % artist
+    elif title:
+        url = 'http://musicbrainz.org/ws/2/release/?query=release:"%s"' % title
+    else:
+        return []
+
     url = url.replace(' ', '%20')
     log.info(url)
     try:
-        response = urllib2.urlopen(url)
+        request = urllib2.Request(url, headers={'User-Agent': 'Albumen'})
+        response = urllib2.urlopen(request)
         data = response.read()
         doc = ET.fromstring(data)
         data = []
