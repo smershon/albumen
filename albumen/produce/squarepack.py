@@ -8,7 +8,7 @@ import Image
 
 from pprint import pprint
 
-import analysis_cache
+from albumen import analysis_cache
 
 def random_iterate(src):
     new_src = list(src)
