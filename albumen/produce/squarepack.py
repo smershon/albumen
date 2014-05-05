@@ -1,4 +1,3 @@
-import fractions
 import math
 import random
 import sys
@@ -66,6 +65,11 @@ def gen_grid(x, y, n):
         n - number of images to fit (if n >= x*y, return x*y)
     """
     g = ImageGrid(x, y)
+
+    if n < (x*y - 3*((x/2) * (y/2))):
+        # Dirty hack so impossible reductions don't take forever
+        return None
+
     if not grid_reduce(g, n):
         return None
     return g    
@@ -99,12 +103,23 @@ def gen_spec(xpx, ypx, n):
     """
         in: xpx, ypx, n
         out: xcells, ycells, cellsize
+
+        Given a width <xpx> and height <ypx> in pixels, calculate the minimum number of squares
+        it takes to fill that space. Given a minimum number of squares to place, return how
+        many on each side are needed to accomodate the min, plus how may pixels/square.
+
+        ex. 100, 100, 4 -> 2, 2, 50
+            100, 150, 6 -> 2, 3, 50
+            100, 150, 15 -> 4, 6, 25
     """ 
-    gcd = fractions.gcd(xpx, ypx)
-    min_xcells = xpx/gcd
-    min_ycells = ypx/gcd
-    scale = int(math.ceil(float(n)/(min_xcells*min_ycells)))
-    return scale*min_xcells, scale*min_ycells, xpx/(scale*min_xcells)
+    best = 1
+    for sq_size in xrange(2, max(xpx,ypx) + 1):
+        if (xpx/sq_size) * (ypx/sq_size) < n:
+            break
+        if not xpx%sq_size and not ypx%sq_size:
+            best = sq_size
+
+    return xpx/best, ypx/best, best
 
 def main(x,y,n, attr):
     xcell, ycell, cellsize = gen_spec(x, y, n)
