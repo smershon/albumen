@@ -50,7 +50,7 @@ class Storage(object):
         with self.db_conn() as conn:
             c = conn.cursor()
             c.execute("""
-                SELECT artist, title, has_mbid FROM albums
+                SELECT artist, title, has_image FROM albums
                 WHERE artist = ? AND title = ?""",
                 (artist, title))
             row = c.fetchone()
@@ -58,11 +58,11 @@ class Storage(object):
             return {
                 'artist': row[0],
                 'album': row[1],
-                'has_mbid': row[2]
+                'has_image': bool(row[2])
             }
         return None
 
-    def update_album(self, artist, title, has_image=True):
+    def update_album(self, artist, title, has_image=False):
         pk = self.album_pk(artist, title)
         if pk:
             with self.db_conn() as conn:
