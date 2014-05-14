@@ -155,3 +155,18 @@ class Storage(object):
                 FROM images""")
             rows = c.fetchall()
         return rows
+
+    def purge(self, artist=None, album=None, pk=None):
+        if not (artist and album) or not pk:
+            return
+
+        pk = pk or self.album_pk(artist, album)
+        
+        with self.db_conn() as conn:
+            c = conn.cursor()
+            c.execute('DELETE FROM images WHERE album_fk=?', (pk,))
+            c.execute('DELETE FROM albums WHERE pk=?', (pk, ))
+
+
+
+
