@@ -32,7 +32,9 @@ class Storage(object):
                 """)
 
     def db_conn(self):
-        return sqlite3.connect('%s/albumen.db' % self.folder)
+        connection = sqlite3.connect('%s/albumen.db' % self.folder)
+        connection.text_factory = str
+        return connection
 
     def album_pk(self, artist, title):
         with self.db_conn() as conn:
