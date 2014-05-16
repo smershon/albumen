@@ -8,12 +8,17 @@ import Image
 
 log = logging.getLogger(__name__)
 
+VERSION = "1.0"
+
 HUE_RED = 0.0
 HUE_GREEN = 1.0/3.0
 HUE_BLUE = 2.0/3.0
 
 def huesim(hls, tgt):
-    return hls[2]*math.cos(2*math.pi*abs(hls[0] - tgt))
+    return math.cos(2*math.pi*abs(hls[0] - tgt))*color(hls)
+
+def color(hls):
+    return (1 - (2*hls[1] - 1)**2) * hls[2]
 
 class ImageAnalysis(object):
     def __init__(self, meta=None):
@@ -33,7 +38,7 @@ class ImageAnalysis(object):
         self.total_red += huesim(hls, HUE_RED)          	
         self.total_green += huesim(hls, HUE_GREEN)
         self.total_blue += huesim(hls, HUE_BLUE)
-        self.total_saturation += hls[2]
+        self.total_saturation += color(hls)
         self.total_lightness += hls[1]
         if self.last is not None:
             self.total_complexity += abs(hls[1] - self.last)
@@ -79,9 +84,6 @@ class ImageAnalysis(object):
     @property
     def complexity(self):
         return self.total_complexity/self.pixels if self.pixels else 0.0
-
-def huesim(p, tgt):
-    return p[2]*math.cos(2*math.pi*abs(p[0] - tgt))
 
 def analyze_file(filename):
     im = Image.open(filename)
