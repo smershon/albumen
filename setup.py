@@ -9,5 +9,6 @@ setup(
     packages=[
         'albumen', 
         'albumen.download',
-        'albumen.produce']
+        'albumen.produce',
+        'albumen.analysis']
 )

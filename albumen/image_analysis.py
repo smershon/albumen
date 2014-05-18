@@ -85,12 +85,12 @@ class ImageAnalysis(object):
     def complexity(self):
         return self.total_complexity/self.pixels if self.pixels else 0.0
 
-def analyze_file(filename):
+def analyze_file(filename, analysis_class=ImageAnalysis):
     im = Image.open(filename)
-    return analyze(im)
+    return analyze(im, analysis_class)
 
-def analyze(img):
-    analysis = ImageAnalysis(meta={
+def analyze(img, analysis_class=ImageAnalysis):
+    analysis = analysis_class(meta={
         'filename': os.path.split(img.filename)[-1],
         'filepath': img.filename,
         'width': img.size[0],
