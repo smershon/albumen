@@ -58,6 +58,10 @@ class ImageGrid(object):
                 return False
         return True       
 
+    def cells_by_size(self):
+        for cell in sorted(self.data.items(), key=lambda x: x[1][0], reverse=True):
+            yield cell
+
 def gen_grid(x, y, n):
     """
         x - max number of cells horizontally
@@ -91,9 +95,8 @@ def grid_reduce(g, n):
 def gen_image(g, attr, cell=100):
     img = Image.new('RGBA', (cell*g.x, cell*g.y))
     sources = [x.meta['filename'] for x in analysis_cache.get_images(sort_field=attr)]
-    for coord, spec in g.data.iteritems():
+    for coord, spec in g.cells_by_size():
         src = sources.pop(0)
-        print coord, spec[0], src
         src_img = Image.open('samples/%s' % src).resize((cell*spec[0], cell*spec[0]), Image.ANTIALIAS)
         box = (cell*coord[0], cell*coord[1], cell*(coord[0] + spec[0]), cell*(coord[1] + spec[0]))
         img.paste(src_img, box)
