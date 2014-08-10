@@ -53,6 +53,15 @@ class ImGrid(object):
                 
         return (-1, (i, j))
 
+    def _missing_blocks(self):
+        missing = []
+        for i in xrange(self.x):
+            for j in xrange(self.y):
+                block = self.get_block(i, j)
+                if block[0] <= 0:
+                    missing.append(block)
+        return missing
+
     def _get_n_blocks(self, i, j, n):
         blocks = []
         for ip in range(n):
@@ -82,38 +91,35 @@ class ImGrid(object):
                 for b in blocks:
                     self._del_block(b[1], self.one)
                     self._del_block(b[1], self.two)
-                for jp in range(4):
-                    if self.get_block(i+3, j + jp)[0] == -1:
-                        self.one.add((i+3, j + jp))
-                for ip in range(4):
-                    if self.get_block(i + ip, j+3)[0] == -1:
-                        self.one.add((i + ip, j+3))
                 self.three.add((i,j))
+                for block in self._missing_blocks():
+                    self.one.add(block[1])
                 return True
         return False
 
 def build_image(xpx, ypx, n, attr, test=False):
     x, y, sqsize = gen_spec(xpx, ypx, n)
-    print x, y, sqsize
     grid = ImGrid(x, y)
-    print grid.size()
+    
     while grid.size() > n:
-        print grid.size()
         if not grid.newtwo():
             if not grid.newthree():
                 print 'bailing out'
                 break
-    print '--%d' % grid.size()
+                
     if test:
         img_src = test_img_src()
     else:
         img_src = db_img_src(attr)
+        
     ret_img = Image.new('RGB', (xpx, ypx))
+    
     for c, size in grid.cells_by_size():
         new_img = img_src.next().resize((size*sqsize, size*sqsize), Image.ANTIALIAS)
         box = ( sqsize*c[0],
                 sqsize*c[1] )
         ret_img.paste(new_img, box)
+        
     return ret_img
         
 def db_img_src(attr):
@@ -123,9 +129,9 @@ def db_img_src(attr):
         
 def test_img_src():
     def random_color():
-        return (random.randint(0, 255), 
-                random.randint(0, 255), 
-                random.randint(0, 255) )
+        return (random.randint(200, 255), 
+                random.randint(200, 255), 
+                random.randint(200, 255) )
     
     while True:
         yield Image.new('RGB', (100, 100), random_color())
