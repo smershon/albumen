@@ -3,6 +3,8 @@ import random
 
 import Image
 
+from albumen import analysis_cache
+
 class ImGrid(object):
     def __init__(self, x, y):
         self.x = x
@@ -24,7 +26,27 @@ class ImGrid(object):
             yield (c, 2)
         for c in random.sample(self.one, len(self.one)):
             yield (c, 1)
-    
+   
+    def edge_cells(self, inner=False):
+        blocks = set()
+        for i in range(self.x):
+            blocks.add(self.get_block(i, 0))
+            blocks.add(self.get_block(i, self.y-1))
+        for j in range(self.y):
+            blocks.add(self.get_block(0, j))
+            blocks.add(self.get_block(self.x-1, j))
+        if not inner:
+            for b in sorted(list(blocks), key=lambda x: x[1], reverse=True):
+                yield (b[1], b[0])
+        else:
+            coords = set([b[1] for b in blocks])
+            for c in self.three - coords:
+                yield (c, 3)
+            for c in self.two - coords:
+                yield (c, 2)
+            for c in self.one - coords:
+                yield (c, 1)
+
     def get_block(self, i, j):
         """
             Return (size, (x, y)),
@@ -97,7 +119,7 @@ class ImGrid(object):
                 return True
         return False
 
-def build_image(xpx, ypx, n, attr, test=False):
+def build_image(xpx, ypx, n, img_src):
     x, y, sqsize = gen_spec(xpx, ypx, n)
     grid = ImGrid(x, y)
     
@@ -107,11 +129,6 @@ def build_image(xpx, ypx, n, attr, test=False):
                 print 'bailing out'
                 break
                 
-    if test:
-        img_src = test_img_src()
-    else:
-        img_src = db_img_src(attr)
-        
     ret_img = Image.new('RGB', (xpx, ypx))
     
     for c, size in grid.cells_by_size():
@@ -124,8 +141,7 @@ def build_image(xpx, ypx, n, attr, test=False):
         
 def db_img_src(attr):
     for img in analysis_cache.get_images(sort_field=attr):
-        yield Image.open('samples/%s' % img.meta['filename']).resize(
-        (cell*spec[0], cell*spec[0]), Image.ANTIALIAS)
+        yield Image.open('samples/%s' % img.meta['filename'])
         
 def test_img_src():
     def random_color():
@@ -145,7 +161,7 @@ def gen_spec(xpx, ypx, n):
         it takes to fill that space. Given a minimum number of squares to place, return how
         many on each side are needed to accomodate the min, plus how may pixels/square.
 
-        ex. 100, 100, 4 -> 2, 2, 50
+        ex.10q, 100, 4 -> 2, 2, 50
             100, 150, 6 -> 2, 3, 50
             100, 150, 15 -> 4, 6, 25
     """
@@ -178,7 +194,13 @@ def main():
         exit()
 
     print options
-    img = build_image(x, y, options.num, options.attr, options.test)
+
+    if options.test:
+        img_src = test_img_src()
+    else:
+        img_src = db_img_src(options.attr)
+
+    img = build_image(x, y, options.num, img_src)
     img.show()
 
 
