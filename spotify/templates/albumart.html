@@ -1,0 +1,20 @@
+<html>
+<head>
+</head>
+<body>
+<table>
+{% for doc in docs %}
+  <tr>
+    <td><a href="{{ doc['image'] }}"><img src="{{ doc['icon'] }}"></a></td>
+    <td>
+      <p><b>{{ doc['name'] }}</b></p> 
+      <p>{{ doc['owner'] }}</p>
+      <p>{{ doc['size'] }}</p>
+      <p>{{ doc['uri'] }}</p>
+      <p><a href="{{ doc['link'] }}">{{ doc['link'] }}</a></p>
+    </td>
+  </tr>
+{% endfor %}
+</table>
+</body>
+</html>
