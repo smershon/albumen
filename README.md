@@ -16,7 +16,7 @@ TODO [bugs]:
 
 2015-07-14:
 Added in the Spotify hackday stuff. Basic use:
-  > python compile.py --uri spotify:user:stuartmershon:playlist:5jXbxp8Ir5UBqKBnFo1ZSo
+  > python compile.py --uri spotify:user:stuartmershon:playlist:35RQDJ5vur8BZ8SpoNoBB1
   
   > python compile.py --uri spotify:user:stuartmershon:playlist:5jXbxp8Ir5UBqKBnFo1ZSo --num 300 --size 1440x900
   
