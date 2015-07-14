@@ -13,3 +13,12 @@ TODO [features]:
 
 TODO [bugs]: 
 - A Blaze in the Northern Sky
+
+2015-07-14:
+Added in the Spotify hackday stuff. Basic use:
+  > python compile.py --uri spotify:user:stuartmershon:playlist:5jXbxp8Ir5UBqKBnFo1ZSo
+  > python compile.py --uri spotify:user:stuartmershon:playlist:5jXbxp8Ir5UBqKBnFo1ZSo --num 300 --size 1440x900
+  
+The albumen library needs to be installed first. It also tries to write everything (large image, thumbnail, metadata) in some directories like webapp/static/images and webapp/static/meta, so you will need to either change those or create those directories.
+
+
